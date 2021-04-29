@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Chat App</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <br>
+        <div class="jumbotron">
+            <h1 class="display-4">Send Message</h1>
+            <br>
+            <input id="name" class="form-control" placeholder="Name">
+            <br>
+            <textarea id="message" class="form-control" placeholder="Your Message Here"></textarea>
+            <br>
+            <button id="send" class="btn btn-success" onclick="onSend()">Send</button>
+        </div>
+        <div id="messages"></div>
+    </div>
+    <script>
+        var socket = io.connect('http://localhost:4000');
+        socket.on("message",onSend);
+        geAllMessages();
+        function geAllMessages() {
+            let url = 'http://localhost:4000/messages';
+            fetch(url).then(response => response.json()).
+                then(data => {
+                    console.log(data);
+                })
+        }
+
+        function onSend(){
+            let name = document.getElementById("name").value;
+            let message = document.getElementById("message").value;
+            let obj = {
+                name:name,
+                message:message
+            }
+            let url = 'http://localhost:4000/messages';
+            let options  = {
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(obj)
+            }
+            fetch(url,options).then(response => response.json()).
+                then(data => {
+                    console.log(data);
+                })
+        }
+    </script>
+</body>
+
+</html>

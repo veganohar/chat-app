@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port  = 4000;
+// const port  = 4000;
 var mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -11,15 +11,17 @@ const io = require("socket.io")(http);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
+app.use(express.static(__dirname));
 
-
-app.listen(port,()=>{
-    console.log("Chat Application is running at http://localhost:"+port );
-});
-
-app.get("/",(req,res)=>{
-    res.send("Welcome to the Chat Application");
-}) 
+// app.listen(port,()=>{
+//     console.log("Chat Application is running at http://localhost:"+port );
+// });
+var server = http.listen(4000, () => {
+    console.log('server is running on port', server.address().port);
+  });
+// app.get("/",(req,res)=>{
+//     res.send("Welcome to the Chat Application");
+// }) 
 
 mongoose.connect('mongodb://localhost:27017/chat-app', {
   useNewUrlParser: true,
@@ -62,7 +64,7 @@ var Message = mongoose.model('Message',{
         if(err){
             res.status(500).send({message:err});
         }
-        io.emit('message',response);
+        io.emit('message',req.body);
         res.send({
             data:response
         })
