@@ -27,32 +27,44 @@
     </div>
     <script>
         var socket = io.connect('http://localhost:4000');
-        socket.on("message",onSend);
+        socket.on("message", geAllMessages);
         geAllMessages();
         function geAllMessages() {
             let url = 'http://localhost:4000/messages';
             fetch(url).then(response => response.json()).
                 then(data => {
                     console.log(data);
+                    showAllMessages(data.data);
                 })
         }
 
-        function onSend(){
+
+        function showAllMessages(messages) {
+            let div = document.getElementById("messages");
+            div.innerHTML='';
+            messages.forEach(e => {
+                let m = `<h4>${e.name}</h4>
+                <p>${e.message}</p>`;
+                div.insertAdjacentHTML("beforeend",m);
+            });
+        }
+
+        function onSend() {
             let name = document.getElementById("name").value;
             let message = document.getElementById("message").value;
             let obj = {
-                name:name,
-                message:message
+                name: name,
+                message: message
             }
             let url = 'http://localhost:4000/messages';
-            let options  = {
-                method:'POST',
-                headers:{
-                    "Content-Type":"application/json"
+            let options = {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
                 },
-                body:JSON.stringify(obj)
+                body: JSON.stringify(obj)
             }
-            fetch(url,options).then(response => response.json()).
+            fetch(url, options).then(response => response.json()).
                 then(data => {
                     console.log(data);
                 })
